@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>दिन और तिथि गणना</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px 40px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            text-align: center;
+            width: 300px;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        #dateChart {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: left;
+            max-height: 150px;
+            overflow-y: auto; /* Only chart has scroll */
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>दिन और तिथि गणना</h1>
+        <form id="calculationForm">
+            <label for="initialDate">अंतिम भुगतान की तिथि:</label>
+            <input type="date" id="initialDate" name="initialDate" required>
+
+            <label for="depositAmount">जमा राशि (रुपये):</label>
+            <input type="number" id="depositAmount" name="depositAmount" placeholder="उदा: 400" required>
+
+            <label for="dailyAmount">प्रति दिन की राशि (रुपये):</label>
+            <input type="number" id="dailyAmount" name="dailyAmount" placeholder="उदा: 100" required>
+
+
+            <button type="button" onclick="calculateDate()">गणना करें</button>
+        </form>
+        <h2 id="result"></h2>
+        <div id="dateChart"></div>
+    </div>
+
+    <script>
+        function calculateDate() {
+            const initialDate = document.getElementById('initialDate').value;
+            const depositAmount = parseFloat(document.getElementById('depositAmount').value);
+            const dailyAmount = parseFloat(document.getElementById('dailyAmount').value);
+
+            if (isNaN(depositAmount) || isNaN(dailyAmount) || !initialDate) {
+                alert("कृपया सभी फ़ील्ड सही से भरें।");
+                return;
+            }
+
+            const initialDateObject = new Date(initialDate);
+            const numberOfDays = depositAmount / dailyAmount;
+            initialDateObject.setDate(initialDateObject.getDate() + numberOfDays);
+
+            const newDate = ("0" + initialDateObject.getDate()).slice(-2) + "-" +
+                            ("0" + (initialDateObject.getMonth() + 1)).slice(-2) + "-" +
+                            initialDateObject.getFullYear();
+
+            document.getElementById('result').innerText = `नई तिथि: ${newDate}\nजमा किए गए दिन: ${numberOfDays}`;
+
+            // Create date chart
+            let dateChart = "जमा की गई तिथियाँ:\n";
+            for (let i = 0; i < numberOfDays; i++) {
+                const depositDate = new Date(initialDateObject);
+                depositDate.setDate(initialDateObject.getDate() - i);
+                dateChart += `${("0" + depositDate.getDate()).slice(-2)}-${("0" + (depositDate.getMonth() + 1)).slice(-2)}-${depositDate.getFullYear()}\n`;
+            }
+
+            document.getElementById('dateChart').innerText = dateChart;
+        }
+    </script>
+</body>
+</html>
