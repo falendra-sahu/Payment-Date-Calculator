@@ -83,48 +83,53 @@
             border-color: var(--primary-color);
         }
 
+		input::placeholder {
+            font-size: 13px; /* Yahan aap chahte size specify kar sakte hain */
+            color: #888;     /* Placeholder ka rang (optional) */
+        }
+
+
         .daily-amounts-container {
             margin-top: 20px;
             margin-bottom: 20px;
-        }
-
-        .daily-amounts-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 15px;
         }
 
         .daily-amount-input {
-            flex: 1 1 calc(33.333% - 7px);
-            min-width: 0;
-            display: flex;
-            align-items: center;
+            flex: 1 1 calc(33% - 10px);
+            position: relative;
         }
 
         .daily-amount-input input {
-            flex-grow: 1;
+            padding-right: 30px; /* Space for the button */
         }
 
         .remove-btn {
-            background-color: #ff4d4d;
-            color: white;
+            background-color: transparent;
+            color: black;
             border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            border-radius: var(--border-radius);
+            width: 20px; /* Smaller button size */
+            height: 20px; /* Smaller button size */
+            position: absolute;
+            right: 5px; /* Adjusted position */
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
+            font-size: 13px;
             transition: background-color 0.3s ease;
-            flex-shrink: 0;
+			padding: 0; /* padding hata do */
+    		margin: 0;  /* margin hata do */
         }
 
         .remove-btn:hover {
-            background-color: #ff3333;
+			color: white;
+            background-color: red;
         }
 
         .button-container {
@@ -158,7 +163,7 @@
         }
 
         .clear-btn:hover {
-            background-color: #c82333;
+            background-color: red;
         }
 
         table {
@@ -216,15 +221,6 @@
                 gap: 10px;
             }
 
-            .date-input {
-                flex: 1 1 calc(50% - 5px);
-                min-width: 0;
-            }
-
-            .daily-amount-input {
-                flex: 1 1 calc(50% - 5px);
-            }
-
             input[type="date"], input[type="number"] {
                 font-size: 14px;
             }
@@ -237,7 +233,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <h2>Payment Date Calculator</h2>
     <div class="date-inputs">
@@ -250,28 +245,23 @@
             <input type="date" id="endPaymentDate" onchange="updateCalculation()">
         </div>
     </div>
-    
     <div class="result" id="result"></div>
-    
-    <div class="daily-amounts-container" id="dailyAmounts"></div>
-    
+    <div class="daily-amounts-container" id="dailyAmounts">
+        <div class="daily-amount-input">
+            <input type="number" placeholder="Enter daily amount" oninput="updateCalculation()">
+            <button class="remove-btn" onclick="removeDailyAmount(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
     <div class="button-container">
-        <button onclick="addDailyAmount()">Add Daily Amount</button>
+        <button onclick="addDailyAmountRow()">Add Daily Amount</button>
         <button class="clear-btn" onclick="clearFields()">Clear</button>
     </div>
 </div>
-
 <script>
-    function addDailyAmount() {
+    function addDailyAmountRow() {
         const dailyAmountsDiv = document.getElementById('dailyAmounts');
-        const lastRow = dailyAmountsDiv.lastElementChild;
-        
-        if (!lastRow || lastRow.children.length === 2) {
-            const newRow = document.createElement('div');
-            newRow.className = 'daily-amounts-row';
-            dailyAmountsDiv.appendChild(newRow);
-        }
-        
         const newInput = document.createElement('div');
         newInput.className = 'daily-amount-input';
         newInput.innerHTML = `
@@ -280,20 +270,12 @@
                 <i class="fas fa-times"></i>
             </button>
         `;
-        dailyAmountsDiv.lastElementChild.appendChild(newInput);
+        dailyAmountsDiv.appendChild(newInput);
         updateCalculation();
     }
 
     function removeDailyAmount(button) {
-        const dailyAmountsDiv = document.getElementById('dailyAmounts');
-        const row = button.closest('.daily-amounts-row');
         button.closest('.daily-amount-input').remove();
-        if (row.children.length === 0) {
-            row.remove();
-        }
-        if (dailyAmountsDiv.children.length === 0) {
-            addDailyAmount();
-        }
         updateCalculation();
     }
 
@@ -346,13 +328,19 @@
         document.getElementById("endPaymentDate").value = '';
         const dailyAmounts = document.getElementById('dailyAmounts');
         dailyAmounts.innerHTML = '';
-        addDailyAmount();
+        const defaultInput = document.createElement('div');
+        defaultInput.className = 'daily-amount-input';
+        defaultInput.innerHTML = `
+            <input type="number" placeholder="Enter daily amount" oninput="updateCalculation()">
+            <button class="remove-btn" onclick="removeDailyAmount(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        dailyAmounts.appendChild(defaultInput);
         updateCalculation();
     }
 
-    addDailyAmount();
-    updateCalculation();
+    clearFields();
 </script>
-
 </body>
 </html>
