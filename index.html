@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Calculator</title>
-	<link rel="icon" type="image/png" href="https://img.icons8.com/?size=80&id=UpnwZDa50fGv&format=png">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=80&id=UpnwZDa50fGv&format=png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
     <style>
         :root {
@@ -316,12 +316,12 @@
                 </div>
                 <div class="amount-input">
                     <label for="totalAmountPaid">Total Amount Paid:</label>
-                    <input type="number" id="totalAmountPaid" oninput="validateTotalAmount()">
+                    <input type="number" id="totalAmountPaid" oninput="validateTotalAmount()" disabled>
                     <div id="totalAmountError" class="error-message"></div>
                 </div>
                 <div class="amount-input">
                     <label for="lastAmountPaymentDate">Last Payment Date:</label>
-                    <input type="date" id="lastAmountPaymentDate" onchange="updateCalculation('amountDateCalc')">
+                    <input type="date" id="lastAmountPaymentDate" onchange="updateCalculation('amountDateCalc')" disabled>
                 </div>
             </div>
             <div class="button-container">
@@ -343,20 +343,32 @@
 
         function validateDailyAmount(shouldUpdateCalculation = true) {
             const dailyAmount = document.getElementById("dailyAmount");
+            const totalAmountPaid = document.getElementById("totalAmountPaid");
+            const lastAmountPaymentDate = document.getElementById("lastAmountPaymentDate");
             const errorDiv = document.getElementById("dailyAmountError");
             const value = parseFloat(dailyAmount.value);
+
             if (isNaN(value) || value <= 0) {
                 errorDiv.textContent = "Please enter a valid amount";
                 dailyAmount.style.borderColor = "var(--error-color)";
+                totalAmountPaid.disabled = true;
+                lastAmountPaymentDate.disabled = true;
                 return false;
             }
+
             if (value % 10 !== 0) {
                 errorDiv.textContent = "Daily amount must be a multiple of 10";
                 dailyAmount.style.borderColor = "var(--error-color)";
+                totalAmountPaid.disabled = true;
+                lastAmountPaymentDate.disabled = true;
                 return false;
             }
+
             errorDiv.textContent = "";
             dailyAmount.style.borderColor = "#ddd";
+            totalAmountPaid.disabled = false;
+            lastAmountPaymentDate.disabled = false;
+
             if (shouldUpdateCalculation) {
                 validateTotalAmount(true);
             }
@@ -368,11 +380,13 @@
             const totalAmount = document.getElementById("totalAmountPaid");
             const errorDiv = document.getElementById("totalAmountError");
             const value = parseFloat(totalAmount.value);
+
             if (isNaN(value) || value <= 0) {
                 errorDiv.textContent = "Please enter a valid amount";
                 totalAmount.style.borderColor = "var(--error-color)";
                 return false;
             }
+
             if (!isNaN(dailyAmount) && dailyAmount > 0) {
                 if (value % dailyAmount !== 0) {
                     errorDiv.textContent = `Total amount must be a multiple of the daily amount (${dailyAmount})`;
@@ -380,8 +394,10 @@
                     return false;
                 }
             }
+
             errorDiv.textContent = "";
             totalAmount.style.borderColor = "#ddd";
+
             if (shouldUpdateCalculation) {
                 updateCalculation('amountDateCalc');
             }
@@ -486,6 +502,8 @@
                 document.getElementById("totalAmountError").textContent = '';
                 document.getElementById("dailyAmount").style.borderColor = "#ddd";
                 document.getElementById("totalAmountPaid").style.borderColor = "#ddd";
+                document.getElementById("totalAmountPaid").disabled = true;
+                document.getElementById("lastAmountPaymentDate").disabled = true;
             }
         }
 
@@ -493,4 +511,3 @@
     </script>
 </body>
 </html>
-
